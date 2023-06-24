@@ -1,11 +1,17 @@
 import React from 'react';
-import { Hello } from './Hello.jsx';
-import { Info } from './Info.jsx';
+import { useTracker } from 'meteor/react-meteor-data';
 
-export const App = () => (
-  <div>
-    <h1>Welcome to Meteor!</h1>
-    <Hello/>
-    <Info/>
-  </div>
-);
+import { LoginForm } from './LoginForm.jsx';
+
+export const App = () => {
+  const user = useTracker(() => Meteor.user());
+  console.log(user)
+
+  return(
+    <div>
+      <h1>Welcome to Carstore</h1>
+      <LoginForm/>
+    </div>
+  );
+
+};
