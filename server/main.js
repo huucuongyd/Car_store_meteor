@@ -6,13 +6,9 @@ import { Accounts } from 'meteor/accounts-base';
 Meteor.startup(async () => {
   if (!Accounts.findUserByUsername('admin')) {
     Accounts.createUser({
-      username: "admin",
-      password: "admin",
+      username: 'admin',
+      password: 'password',
     });
   }
-
-  const user = Accounts.findUserByUsername('admin');
-
-  console.log(user)
 
 });
