@@ -1,11 +1,29 @@
-import React from 'react';
-import { Hello } from './Hello.jsx';
-import { Info } from './Info.jsx';
+import React,{Fragment} from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
 
-export const App = () => (
-  <div>
-    <h1>Welcome to Meteor!</h1>
-    <Hello/>
-    <Info/>
-  </div>
-);
+import { LoginForm } from './LoginForm.jsx';
+import { ChatForm } from './ChatBox.jsx';
+
+export const App = () => {
+  const user = useTracker(() => Meteor.user());
+
+
+  const logout = () => Meteor.logout();
+
+  return(
+    <div>
+      <h1>Welcome to Carstore</h1>
+      {user ? (
+        <Fragment>
+            <button className="button user" onClick={logout}>
+              {user.username || user.profile.name} 🚪
+            </button>
+            <ChatForm user={user}/>
+        </Fragment>
+        ) : (
+          <LoginForm />
+        )}
+    </div>
+  );
+
+};
