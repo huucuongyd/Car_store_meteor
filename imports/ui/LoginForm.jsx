@@ -9,6 +9,7 @@ export const LoginForm = () => {
     e.preventDefault();
 
     Meteor.loginWithPassword(username, password, function(error){
+      
     })
 
   };
