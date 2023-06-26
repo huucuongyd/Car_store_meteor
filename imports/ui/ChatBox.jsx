@@ -1,8 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Messages } from '../api/Messages';
 
-export const ChatForm = ({user}) => {
-  const [messages, setMessages] = useState([]);
+export const ChatForm = ({ user }) => {
   const [newMessage, setNewMessage] = useState('');
+  const [messChange, setMessChange] = useState([]);
+
+  useEffect(() => {
+    const handleMessagesChange = () => {
+      const messages = Messages.find().fetch();
+      setMessChange(messages);
+    };
+
+    const subscription = Meteor.subscribe('messages');
+    const observer = Messages.find().observeChanges({
+      added: handleMessagesChange,
+      changed: handleMessagesChange,
+      removed: handleMessagesChange,
+    });
+
+    return () => {
+      subscription.stop();
+      observer.stop();
+    };
+  }, []);
 
   const handleMessageChange = (event) => {
     setNewMessage(event.target.value);
@@ -11,21 +31,19 @@ export const ChatForm = ({user}) => {
   const handleSendClick = (event) => {
     event.preventDefault();
     if (newMessage.trim() !== '') {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      Meteor.call('sendMessage', newMessage, user);
       setNewMessage('');
     }
   };
 
   return (
     <div className="chatbox">
-      <div className="chatbox-header">
-        Chatbox
-      </div>
+      <div className="chatbox-header">Chatbox</div>
       <div className="chatbox-messages">
-        {messages.map((message, index) => (
-          <div key={index} className="message">
-            <div className="sender">{user.username}</div>
-            <div className="text">{message}</div>
+        {messChange.map((message) => (
+          <div key={message._id} className="message">
+            <div className="sender">{message.u.username}</div>
+            <div className="text">{message.text}</div>
           </div>
         ))}
       </div>
@@ -40,5 +58,4 @@ export const ChatForm = ({user}) => {
       </form>
     </div>
   );
-}
-
+};

@@ -1,12 +1,10 @@
 import React,{Fragment} from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
-
 import { LoginForm } from './LoginForm.jsx';
 import { ChatForm } from './ChatBox.jsx';
 
 export const App = () => {
   const user = useTracker(() => Meteor.user());
-
 
   const logout = () => Meteor.logout();
 
