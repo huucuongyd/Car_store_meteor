@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Messages } from "../imports/api/Messages";
 Meteor.startup(() => {
+
   Meteor.methods({
     sendMessage(message, user) {
       Messages.insert({
@@ -14,6 +15,7 @@ Meteor.startup(() => {
 
     }
   });
+  
 }); 
 Meteor.publish('messages', function() {
   return Messages.find();
