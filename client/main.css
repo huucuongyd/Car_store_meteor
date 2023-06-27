@@ -117,6 +117,14 @@ body {
 .sender {
   font-weight: bold;
 }
+.sender-right {
+  font-weight: bold;
+  text-align: right;
+}
+
+.text-right {
+  text-align: right;
+}
 
 .chatbox-input {
   display: flex;
