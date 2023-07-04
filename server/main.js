@@ -15,8 +15,12 @@ Meteor.startup(() => {
 
     }
   });
-  
+
 }); 
 Meteor.publish('messages', function() {
   return Messages.find();
+});
+
+Meteor.publish('user_online', function () {
+  return Meteor.users.find({ 'status.online': true });
 });

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Messages } from '../api/Messages';
+import Game from './Story';
 
 
 
 export const ChatForm = ({ user }) => {
   const [newMessage, setNewMessage] = useState('');
   const [messChange, setMessChange] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   const chatboxRef = useRef(null);
 
@@ -32,6 +34,22 @@ export const ChatForm = ({ user }) => {
     scrollToBottom();
   }, [messChange]);
 
+  useEffect(() => {
+    const userOnlineSubscription = Meteor.subscribe('user_online');
+
+    const userStatusTracker = Tracker.autorun(() => {
+      if (userOnlineSubscription.ready()) {
+        const usersOnline = Meteor.users.find({ 'status.online': true }).fetch();
+        setOnlineUsers(usersOnline);
+      }
+    });
+
+    return () => {
+      userOnlineSubscription.stop();
+      userStatusTracker.stop();
+    };
+  }, []);
+
   const handleMessageChange = (event) => {
     setNewMessage(event.target.value);
   };
@@ -53,7 +71,22 @@ export const ChatForm = ({ user }) => {
 
   return (
     <div className="chatbox" >
-      <div className="chatbox-header">Chatbox</div>
+      <div className="chatbox-header">
+        <div className='select-users'>
+        <select name="userOnline" id="userOnline">
+          {onlineUsers.length === 1 ? (
+            <option> No User Online</option>
+            ) : (
+              onlineUsers.map(u => {
+                if (u.username !== user.username) {
+                  return <option value={u.username} key={u._id}>{u.username}</option>;
+                }
+              })
+            )}
+        </select>
+        </div>
+        <div className='title'>Chat Box</div>
+      </div>
       <div className="chatbox-messages" ref={chatboxRef}>
         {messChange.map((message) =>{
           if(message.u.username == user.username){
@@ -73,17 +106,17 @@ export const ChatForm = ({ user }) => {
             )
           }
 
-        })}
+        })}    
       </div>
       <form className="chatbox-input" onSubmit={handleSendClick}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={handleMessageChange}
-          placeholder="Type your message..."
-        />
-        <button type="submit">Send</button>
-      </form>
+          <input
+            type="text"
+            value={newMessage}
+            onChange={handleMessageChange}
+            placeholder="Type your message..."
+          />
+          <button type="submit">Send</button>
+        </form>  
     </div>
   );
 };
